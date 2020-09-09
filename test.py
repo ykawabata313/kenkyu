@@ -12,8 +12,8 @@ def btn_click():
     count_mae = txt1.get()
     count_ato = txt2.get()
     #動画の秒数を計算(30FPS ×　入力値　＝　描画枚数)
-    movie_second_mae = 30 * int(count_mae)  
-    movie_second_ato = 30 * int(count_ato)
+    movie_second_mae = 29 * int(count_mae)  
+    movie_second_ato = 29 * int(count_ato)
 
     buffer = []
 
@@ -31,39 +31,25 @@ def btn_click():
     #現在撮影中の動画表示プログラム
     while True:
         ret, frame1 = camera.read()
-
-        # フレームをHSVに変換
-        hsv = cv2.cvtColor(frame1, cv2.COLOR_BGR2HSV)
-
-        # 取得する色の範囲を指定する
-        lower_yellow = np.array([20, 50, 50])
-        upper_yellow = np.array([100, 255, 255])
-        # 指定した色に基づいたマスク画像の生成
-        img_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
-        # フレーム画像とマスク画像の共通の領域を抽出する。
-        img_color = cv2.bitwise_and(frame1, frame1, mask=img_mask)
-
-        cv2.imshow("1", frame1)
-        cv2.imshow("Color Image", img_color)
-
         buffer.append(frame1)
+        cv2.imshow("1", frame1)    
         if cv2.waitKey(1) & 0xFF == ord('q'): 
             break
-    
+
 
     #数秒前の描写を保存しておくためのプログラム
     for i in range(len(buffer) - movie_second_mae ,len(buffer)):
         frame2 = buffer.pop(i)    
-        cv2.imshow("0", frame2)                                
+        cv2.imshow("0", frame2)                
         buffer.append(frame1)                                     
-        video1.write(frame2)                                   #動画１を保存
+        video1.write(frame2)                                   #動画１を保存 
 
     start_time = time.time()
 
         #動画２の撮影と保存用プログラム
     while True:
         ret, frame = camera.read()                             # フレームを取得
-        video2.write(frame)                                    # 動画を1フレームずつ保存する
+        video2.write(frame)                                    # 動画2を1フレームずつ保存する
         cv2.imshow('2', frame)                                 # フレームを画面に表示
 
         finish_time = time.time()
