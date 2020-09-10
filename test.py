@@ -2,6 +2,7 @@ import cv2
 import time
 import tkinter
 import numpy as np
+from moviepy.editor import *
 
 camera = cv2.VideoCapture(0)
 
@@ -9,11 +10,13 @@ camera = cv2.VideoCapture(0)
 def btn_click():
 
     #入力された数値をcountに代入
-    count_mae = txt1.get()
-    count_ato = txt2.get()
-    #動画の秒数を計算(30FPS ×　入力値　＝　描画枚数)
-    movie_second_mae = 29 * int(count_mae)  
-    movie_second_ato = 29 * int(count_ato)
+    global count_mae
+    count_mae = int(txt1.get())
+    global count_ato
+    count_ato = int(txt2.get())
+    #動画の秒数を計算(29FPS ×　入力値　＝　描画枚数)
+    movie_second_mae = 29 * count_mae  
+    movie_second_ato = 29 * count_ato
 
     buffer = []
 
@@ -68,6 +71,9 @@ def btn_click():
     #ウィンドウを削除
     root.destroy()
 
+#-------------------------------------------------
+#UIの設定です。
+
 #画面の設定
 root = tkinter.Tk()             # Tkクラス生成
 root.geometry('300x200')        # 画面サイズ
@@ -94,3 +100,13 @@ btn.place(x=130, y=160)
 
 # 表示
 root.mainloop()
+#-------------------------------------------------
+
+
+# Vieo1の動画時間をカットして修正
+file_path = 'video1.mp4'
+start = 0
+end = count_mae
+save_path = 'video1_re.mp4'
+video = VideoFileClip(file_path).subclip(start, end)
+video.write_videofile(save_path, fps=29)
