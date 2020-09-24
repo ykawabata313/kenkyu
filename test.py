@@ -3,8 +3,13 @@ import time
 import tkinter
 import numpy as np
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 from moviepy.editor import *
+>>>>>>> test
+=======
+from moviepy.editor import *
+import os
 >>>>>>> test
 
 camera = cv2.VideoCapture(0)
@@ -38,6 +43,7 @@ def btn_click():
     while True:
         ret, frame1 = camera.read()
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         # フレームをHSVに変換
         hsv = cv2.cvtColor(frame1, cv2.COLOR_BGR2HSV)
@@ -53,6 +59,8 @@ def btn_click():
         cv2.imshow("1", frame1)
         cv2.imshow("Color Image", img_color)
 
+=======
+>>>>>>> test
 =======
 >>>>>>> test
         buffer.append(frame1)
@@ -130,4 +138,11 @@ start = 0
 end = count_mae
 save_path = 'video1_re.mp4'
 video = VideoFileClip(file_path).subclip(start, end)
+<<<<<<< HEAD
 video.write_videofile(save_path, fps=29)
+=======
+video.write_videofile(save_path, fps=29)
+
+# Video1の元動画を削除
+os.unlink('video1.mp4')
+>>>>>>> test
