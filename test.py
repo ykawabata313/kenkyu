@@ -3,6 +3,7 @@ import time
 import tkinter
 import numpy as np
 from moviepy.editor import *
+import os
 
 camera = cv2.VideoCapture(0)
 
@@ -110,3 +111,6 @@ end = count_mae
 save_path = 'video1_re.mp4'
 video = VideoFileClip(file_path).subclip(start, end)
 video.write_videofile(save_path, fps=29)
+
+# Video1の元動画を削除
+os.unlink('video1.mp4')
