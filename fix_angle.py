@@ -4,20 +4,24 @@ import numpy as np
 def add_rectangle(file):
 
     # 画像によっていい感じの値に変えてください(光の加減などによっていろいろ変わってしまいます)
-    thresh = 63
-    thresh_max = 70
+    thresh = 80
+    ksize = 5
 
     img = cv2.imread(file)
     img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _thre, img_ic = cv2.threshold(img_HSV, thresh, thresh_max, cv2.THRESH_BINARY_INV)
+    _thre, img_ic = cv2.threshold(img_HSV, thresh, 255, cv2.THRESH_BINARY_INV)
+    img_ic = cv2.medianBlur(img_ic, ksize)
+    #cv2.imwrite("image/uuu.jpg", img_ic)
     contours, hierarchy = cv2.findContours(img_ic, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
 
     for i in range(0, len(contours)):
         if len(contours[i]) > 0:
 
             # ゴミを取り除く
-            if cv2.contourArea(contours[i]) < 100000:
-                continue
+            if cv2.contourArea(contours[i]) < 500000:
+                    continue
+            if cv2.contourArea(contours[i]) > 10000000:
+                    continue
 
             # 回転を考慮した外接矩形を描く
             rect = cv2.minAreaRect(contours[i])
@@ -32,6 +36,7 @@ def add_rectangle(file):
             radius = int(radius)
             img = cv2.circle(img,circle_center,radius,(0,255,0),4)
 
+    #cv2.imwrite("un.jpg", img)
     return angle, circle_center, radius, img, rect
 
 
@@ -41,10 +46,13 @@ def trimming_image(file):
 
     # 画像の回転角
     angle = result[0]
+    if angle <= 90:
+        angle += 90
+    print(angle)
     # ICの中心座標
     center_locate = result[1]
-    x = center_locate[0]
-    y = center_locate[1]
+    center_x = center_locate[0]
+    center_y = center_locate[1]
     # 最小外接円の半径
     radius = result[2]
     # 画像のデータ
@@ -56,7 +64,7 @@ def trimming_image(file):
     h = rect[1][1]
 
     # ICを中心に画像をトリミング(余裕を持って+-100)
-    img_trim = img[y-radius-100 : y+radius+100, x-radius-100 : x+radius+100]
+    img_trim = img[center_y-radius-100 : center_y+radius+100, center_x-radius-100 : center_x+radius+100]
 
     # トリミング後、画像を回転
     center_height = int(img_trim.shape[0]/2)
@@ -67,8 +75,11 @@ def trimming_image(file):
     img2 = cv2.warpAffine(img_trim, trans, (2*center_width,2*center_height))
 
     # 画像を回転後、もう一度トリミング
-    img3 = img2[center_height-int((h/2))-30 : center_height+int((h/2))+30, center_width-int((w/2))-200 : center_width+int((w/2))+200]
-    cv2.imwrite("image/fixed_angle.jpg", img3)
+    img3 = img2[center_height-int(radius) : center_height+int(radius), center_width-int(radius)+100 : center_width+int(radius)-100]
 
-trimming_image("image/origin1.jpg")
+    return img3
+
+for i in range(1,7):
+    img = trimming_image("image/{}.jpg".format(i))
+    cv2.imwrite("image/fixed_{}.jpg".format(i), img)
 
