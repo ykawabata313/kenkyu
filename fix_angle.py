@@ -1,10 +1,10 @@
 import cv2
 import numpy as np
 
-def add_rectangle(file):
+def add_rectangle(file,t):
 
     # 画像によっていい感じの値に変えてください(光の加減などによっていろいろ変わってしまいます)
-    thresh = 80
+    thresh = t
     ksize = 5
 
     img = cv2.imread(file)
@@ -18,10 +18,11 @@ def add_rectangle(file):
         if len(contours[i]) > 0:
 
             # ゴミを取り除く
-            if cv2.contourArea(contours[i]) < 500000:
+            if cv2.contourArea(contours[i]) < 100000:
                     continue
-            if cv2.contourArea(contours[i]) > 10000000:
-                    continue
+            #if cv2.contourArea(contours[i]) > 1000000:
+                    #continue
+            
 
             # 回転を考慮した外接矩形を描く
             rect = cv2.minAreaRect(contours[i])
@@ -40,9 +41,9 @@ def add_rectangle(file):
     return angle, circle_center, radius, img, rect
 
 
-def trimming_image(file):
+def trimming_image(file, num=60):
     # 矩形描写関数の呼び込み
-    result = add_rectangle(file)
+    result = add_rectangle(file, num)
 
     # 画像の回転角
     angle = result[0]
@@ -66,6 +67,7 @@ def trimming_image(file):
     # ICを中心に画像をトリミング(余裕を持って+-100)
     img_trim = img[center_y-radius-100 : center_y+radius+100, center_x-radius-100 : center_x+radius+100]
 
+    #cv2.imwrite("iii.jpg", img_trim)
     # トリミング後、画像を回転
     center_height = int(img_trim.shape[0]/2)
     center_width = int(img_trim.shape[1]/2)
@@ -82,7 +84,3 @@ def trimming_image(file):
 #for i in range(1,7):
     #img = trimming_image("image/{}.jpg".format(i))
     #cv2.imwrite("image/fixed_{}.jpg".format(i), img)
-
-path = "image/origin/false/f_1.jpg"
-img = trimming_image(path)
-cv2.imwrite("f_1.jpg",img)

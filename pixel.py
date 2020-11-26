@@ -4,16 +4,19 @@ import matplotlib.pyplot as plt
 
 #画像の読み込み
 #imgに三次元のnp.arrayの配列が格納される。
-img = plt.imread('image/aaa.jpg') 
+#画像の白い部分のみをグラフにプロットする関数です
 
-white = 255
-ans = np.where(img==white)
-x = []
-y = []
-for i in range(0,len(ans[0])):
-    x.append(ans[0][i])
-    y.append(ans[1][i])
+def create_graph(file):
+    img = plt.imread(file) 
 
-plt.plot(x, y, marker="o", color = "red", linestyle = "--")
+    white = 255
+    ans = np.where(img==white)
+    x = []
+    y = []
+    for i in range(0,len(ans[0])):
+        x.append(ans[0][i])
+        y.append(ans[1][i])
 
-plt.show()
+    plt.plot(x, y, marker="o", color = "red", linestyle = "--")
+
+    plt.show()
