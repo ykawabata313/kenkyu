@@ -5,14 +5,14 @@ import time
 
 cap = cv2.VideoCapture(0)
 
-i = 100
-while i < 200:
+i = 0
+while i < 100:
     # フレームをキャプチャする
     ret, frame = cap.read()
 
     # 画面に表示する
     cv2.imshow('frame',frame)
-    path = "image/origin/false/f_{}.jpg".format(i)
+    path = "image/origin/true/t_{}.jpg".format(i)
     cv2.imwrite(path,frame)
     time.sleep(0.5)
     i+=1
