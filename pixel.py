@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 #画像の読み込み
 #imgに三次元のnp.arrayの配列が格納される。
-img = plt.imread('image/t_5.jpg') 
+img = plt.imread('image/aaa.jpg') 
 
 white = 255
 ans = np.where(img==white)

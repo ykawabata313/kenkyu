@@ -14,8 +14,10 @@ def thresh(file):
 
     return img_thresh
 
-for i in range(1,5):
-    img = thresh("image/fixed_{}.jpg".format(i))
-    cv2.imwrite("image/true{}.jpg".format(i+2), img)
+#for i in range(1,5):
+    #img = thresh("image/fixed_{}.jpg".format(i))
+    #cv2.imwrite("image/true{}.jpg".format(i+2), img)
 
+img = thresh("image/t__1.jpg")
+cv2.imwrite("image/aaa.jpg", img)
 

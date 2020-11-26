@@ -79,7 +79,10 @@ def trimming_image(file):
 
     return img3
 
-for i in range(1,7):
-    img = trimming_image("image/{}.jpg".format(i))
-    cv2.imwrite("image/fixed_{}.jpg".format(i), img)
+#for i in range(1,7):
+    #img = trimming_image("image/{}.jpg".format(i))
+    #cv2.imwrite("image/fixed_{}.jpg".format(i), img)
 
+path = "image/origin/false/f_1.jpg"
+img = trimming_image(path)
+cv2.imwrite("f_1.jpg",img)
