@@ -41,13 +41,13 @@ def add_rectangle(file,t):
     return angle, circle_center, radius, img, rect
 
 
-def trimming_image(file, num=40):
+def trimming_image(file, num=35):
     # 矩形描写関数の呼び込み
     result = add_rectangle(file, num)
 
     # 画像の回転角
     angle = result[0]
-    if angle <= 90:
+    if angle >= 45 or angle <= -45:
         angle += 90
     print(angle)
     # ICの中心座標
