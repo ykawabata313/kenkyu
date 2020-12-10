@@ -13,7 +13,7 @@ def capture():
         if key == ord('q'):
             break
         elif key == ord('s'):
-            path = "image/image.jpg"
+            path = "image.jpg"
             cv2.imwrite(path,frame)
             break
 

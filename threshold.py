@@ -1,9 +1,9 @@
 import cv2
 
-def thresh(file):
+def thresh(file, t):
     img = cv2.imread(file, 0)
     # 閾値の設定
-    threshold = 210
+    threshold = t
     ksize = 9
 
     # 二値化(閾値100を超えた画素を255にする。)
