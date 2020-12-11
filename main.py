@@ -140,7 +140,20 @@ def matching(file):
     judge_num = min(x)
 
     return dst, judge_num
-    
+
+'''
+ICを評価する関数
+'''
+def judgement(file,num):
+    img = cv2.imread(file)
+    #足が折れていない時の処理
+    if num < 3800:
+        print(num)
+        print("足は曲がっていないです")
+    #足が折れている時の処理
+    elif num >= 3800:
+        print(num)
+        print("足が曲がっています")
 
 def main():
     img = capture()
@@ -150,12 +163,13 @@ def main():
     img_thresh = thresh("trim.jpg", 210)
     cv2.imwrite("thresh.jpg", img_thresh)
     judge = matching("thresh.jpg")
-    cv2.imwrite("image/img_sample/t.jpg", judge[0])
-    print(judge[1])
+    cv2.imwrite("judge.jpg", judge[0])
+    judgement("judge.jpg", judge[1])
 
     os.remove("cap.jpg")
     os.remove("trim.jpg")
     os.remove("thresh.jpg")
+    os.remove("judge.jpg")
 
 if __name__ == "__main__":
     main()
