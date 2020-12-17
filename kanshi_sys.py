@@ -2,15 +2,8 @@ import cv2
 import time
 import tkinter
 import numpy as np
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-from moviepy.editor import *
->>>>>>> test
-=======
 from moviepy.editor import *
 import os
->>>>>>> test
 
 camera = cv2.VideoCapture(0)
 
@@ -21,51 +14,31 @@ def btn_click():
     global count_mae
     count_mae = int(txt1.get())
     global count_ato
-    count_ato = int(txt2.get())
-    #動画の秒数を計算(29FPS ×　入力値　＝　描画枚数)
-    movie_second_mae = 29 * count_mae  
-    movie_second_ato = 29 * count_ato
-
+    count_ato = int(txt2.get()) 
+    global fps
     buffer = []
 
     #-----------------------------------------------------------
     # 動画ファイル保存用の設定
-    fps = int(camera.get(cv2.CAP_PROP_FPS))                         # カメラのFPSを取得
-    w = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))                   # カメラの横幅を取得
-    h = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))                  # カメラの縦幅を取得
-    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')             # 動画保存時のfourcc設定（mp4用）
-    video1 = cv2.VideoWriter('video1.mp4', fourcc, 15, (w, h))      # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
-    video2 = cv2.VideoWriter('video2.mp4', fourcc, fps, (w, h))     # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
+    fps = int(camera.get(cv2.CAP_PROP_FPS))                                     # カメラのFPSを取得
+    w = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))                               # カメラの横幅を取得
+    h = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))                              #　カメラの縦幅を取得
+    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')                         # 動画保存時のfourcc設定（mp4用）
+    video1 = cv2.VideoWriter('video1.mp4', fourcc, 15, (w, h))                  # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
+    video2 = cv2.VideoWriter('video/after_video.mp4', fourcc, fps, (w, h))      # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
     #-----------------------------------------------------------
 
+    #動画の秒数を計算(FPS ×　入力値　＝　描画枚数)
+    movie_second_mae = fps * count_mae  
+    movie_second_ato = fps * count_ato
     
     #現在撮影中の動画表示プログラム
     while True:
         ret, frame1 = camera.read()
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-        # フレームをHSVに変換
-        hsv = cv2.cvtColor(frame1, cv2.COLOR_BGR2HSV)
-
-        # 取得する色の範囲を指定する
-        lower_yellow = np.array([20, 50, 50])
-        upper_yellow = np.array([100, 255, 255])
-        # 指定した色に基づいたマスク画像の生成
-        img_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
-        # フレーム画像とマスク画像の共通の領域を抽出する。
-        img_color = cv2.bitwise_and(frame1, frame1, mask=img_mask)
-
-        cv2.imshow("1", frame1)
-        cv2.imshow("Color Image", img_color)
-
-=======
->>>>>>> test
-=======
->>>>>>> test
         buffer.append(frame1)
-        cv2.imshow("1", frame1)    
-        if cv2.waitKey(1) & 0xFF == ord('q'): 
+        cv2.imshow("1", frame1)
+    
+        if cv2.waitKey(1) & 0xFF == ord('q'):                 #qキーを押したところから前と後の動画を保存します
             break
 
 
@@ -107,14 +80,14 @@ def btn_click():
 root = tkinter.Tk()             # Tkクラス生成
 root.geometry('300x200')        # 画面サイズ
 root.title('テキストボックス')     #画面タイトル
-root.configure(bg='red')
+root.configure(bg='white')
 
 #ラベル
 lbl = tkinter.Label(text='movie time setting...')
 lbl.place(x=30,y=70)
-lbl = tkinter.Label(text='何秒前の動画が欲しい？')
+lbl = tkinter.Label(text='何秒前の動画を残しますか？')
 lbl.place(x=30,y=100)
-lbl = tkinter.Label(text='何秒後の動画が欲しい？')
+lbl = tkinter.Label(text='何秒後の動画を残しますか？')
 lbl.place(x=30,y=130)
 
 #テキストボックス
@@ -136,13 +109,9 @@ root.mainloop()
 file_path = 'video1.mp4'
 start = 0
 end = count_mae
-save_path = 'video1_re.mp4'
+save_path = 'video/before_video.mp4'
 video = VideoFileClip(file_path).subclip(start, end)
-<<<<<<< HEAD
-video.write_videofile(save_path, fps=29)
-=======
-video.write_videofile(save_path, fps=29)
+video.write_videofile(save_path, fps)
 
 # Video1の元動画を削除
 os.unlink('video1.mp4')
->>>>>>> test
