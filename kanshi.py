@@ -1,18 +1,16 @@
 import cv2
 import time
-import datetime
 import tkinter
 import numpy as np
 from moviepy.editor import *
 import os
 import datetime
-import math
-##import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 camera = cv2.VideoCapture(0)
 #エラー検出をするピンの設定
-##GPIO.setmode(GPIO.BCM)
-##GPIO.setup(3, GPIO.IN)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(3, GPIO.IN)
 now = datetime.datetime.now()
 file_name = 'video/' + now.strftime('%Y%m%d_%H%M%S') + '_ato' + '.mp4'
 #clickイベント
@@ -25,8 +23,8 @@ def btn_click():
     count_ato = int(txt2.get()) 
     global fps
     global movie_scale
-    global video_num
-    movie_scale = 1
+    movie_scale = 2
+    buffer = []
 
     #-----------------------------------------------------------
     # 動画ファイル保存用の設定
@@ -34,39 +32,25 @@ def btn_click():
     w = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))                               # カメラの横幅を取得
     h = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))                              #　カメラの縦幅を取得
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')                         # 動画保存時のfourcc設定（mp4用）
-    #video1 = cv2.VideoWriter('video1.mp4', fourcc, fps/movie_scale, (w, h))     # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
-    video2 = cv2.VideoWriter(file_name, fourcc, fps/movie_scale, (w, h))        # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
+    video1 = cv2.VideoWriter('video1.mp4', fourcc, fps/movie_scale, (w, h))                  # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
+    video2 = cv2.VideoWriter(file_name, fourcc, fps/movie_scale, (w, h))      # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
     #-----------------------------------------------------------
 
     #動画の秒数を計算(FPS ×　入力値　＝　描画枚数)
-    frame_num = fps * count_mae
-
-    flg = False
+    movie_second_mae = fps * count_mae
+    movie_second_ato = fps * count_ato
     
     #現在撮影中の動画表示プログラム
-    for i in range(1,99999999):
-        start_time = datetime.datetime.now().second
-        video1 = cv2.VideoWriter('video{}.mp4'.format(i), fourcc, fps/movie_scale, (w, h))
-        video_num = i
-        while True:
-            ret, frame1 = camera.read()
-            cv2.imshow("1", frame1)
-            video1.write(frame1)
-            now_time = datetime.datetime.now().second
-            time1 = now_time-start_time
-            time2 = start_time-now_time
-            if time1 == 30 or time2 == 30:
-                os.unlink("video{}.mp4".format(i))
-                break
-            if cv2.waitKey(1) & 0xFF == ord('q'):                 #qキーを押したところから前と後の動画を保存します
-                flg = True
-                break
-        if flg:
+    while True:
+        ret, frame1 = camera.read()
+        buffer.append(frame1)
+        cv2.imshow("1", frame1)
+        video1.write(frame1) 
+    
+        if GPIO.input(3) == GPIO.LOW:
             break
-        
-        #if GPIO.input(3) == GPIO.LOW:
-            #break
-        
+        if cv2.waitKey(1) & 0xFF == ord('q'):                 #qキーを押したところから前と後の動画を保存します
+            break
         
     start_time = time.time()
 
@@ -84,7 +68,7 @@ def btn_click():
         if cv2.waitKey(1) & 0xFF == ord('q'): 
             break
     
-    #GPIO.cleanup()
+    GPIO.cleanup()
     
     #カメラを開放
     camera.release()
@@ -127,13 +111,13 @@ root.mainloop()
 file_name = 'video/' + now.strftime('%Y%m%d_%H%M%S') + '_mae' + '.mp4'
 
 # Vieo1の動画時間をカットして修正
-cap = cv2.VideoCapture("video{}.mp4".format(video_num))
+cap = cv2.VideoCapture("video1.mp4")
 video_frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 video_len_sec = movie_scale * video_frame_count / fps
 start = video_len_sec - count_mae
 end = video_len_sec
-video = VideoFileClip('video{}.mp4'.format(video_num)).subclip(start, end)
+video = VideoFileClip('video1.mp4').subclip(start, end)
 video.write_videofile(file_name, fps)
 
 # Video1の元動画を削除
-os.unlink('video{}.mp4'.format(video_num))
+os.unlink('video1.mp4')

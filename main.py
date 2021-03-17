@@ -19,8 +19,6 @@ def capture():
         if key == ord('q'):
             break
         elif key == ord('s'):
-            #path = "image.jpg"
-            #cv2.imwrite(path,frame)
             image = frame
             break
 
@@ -42,6 +40,7 @@ def trimming_image(file,thresh=35):
     img = cv2.imread(file)
     img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     _thre, img_ic = cv2.threshold(img_HSV, thresh, 255, cv2.THRESH_BINARY_INV)
+    cv2.imwrite("２値化画像.jpg", img_ic)
     img_ic = cv2.medianBlur(img_ic, ksize)
     contours, hierarchy = cv2.findContours(img_ic, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
 
@@ -67,6 +66,10 @@ def trimming_image(file,thresh=35):
             #img = cv2.circle(img,circle_center,radius,(0,255,0),4)
             #cv2.drawContours(img, [box],0,(0,0,255),4) 
     
+    cv2.imwrite("輪郭.jpg", img)
+
+    print(angle)
+
     if angle >= 45 or angle <= -45:
         angle += 90
 
@@ -111,7 +114,7 @@ def thresh(file, thresh):
 def matching(file):
     img1 = cv2.imread("image/比較元画像/true_two_value.jpg")                      #足の曲がりがない比較元の画像
     img2 = cv2.imread(file)                                                     #比較対象の画像
-    x = []                                                                      
+    x = []                                                     
 
     #画像の処理をするために２つの画像サイズを一緒にする
     x_trim = (img1.shape[0]+img2.shape[0])/2
@@ -147,15 +150,15 @@ ICを評価する関数
 def judgement(file,num):
     img = cv2.imread(file)
     #足が折れていない時の処理
-    if num < 3800:
+    if num < 3500:
         print(num)
         print("足は曲がっていないです")
     #足が折れている時の処理
-    elif num >= 3800:
+    elif num >= 3500:
         print(num)
         print("足が曲がっています")
 
-def main():
+def main(): 
     img = capture()
     cv2.imwrite("cap.jpg", img)
     img_trim = trimming_image("cap.jpg", 35)
@@ -166,10 +169,10 @@ def main():
     cv2.imwrite("judge.jpg", judge[0])
     judgement("judge.jpg", judge[1])
 
-    os.remove("cap.jpg")
-    os.remove("trim.jpg")
-    os.remove("thresh.jpg")
-    os.remove("judge.jpg")
+    #os.remove("cap.jpg")
+    #os.remove("trim.jpg")
+    #os.remove("thresh.jpg")
+    #os.remove("judge.jpg")
 
 if __name__ == "__main__":
-    main()
+        main()
